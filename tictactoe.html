@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="main">
+<head>
+    <meta charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content=""IE="edge">
+    <meta name=viewport" contnet="width=device-width, initial-scale=1">
+    <title>Tic Tac Toe</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+</head>
+
+<body ng-controller="MainContoller">
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Tic Tac Toe</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="starter-template">
+        <h1>Tic tac toe</h1>
+        <p class="lead">This is a simple game of tic tac toe using JavaScript and SVG.</p>
+        <svg height="600" width="600" id="theSquare">
+            <line x1="200" y1="0" x2="200" y2="600" style="stroke:rgb(0,0,0);stroke-width:20" />
+            <line x1="400" y1="0" x2="400" y2="600" style="stroke:rgb(0,0,0);stroke-width:20" />
+            <line x1="0" y1="200" x2="600" y2="200" style="stroke:rgb(0,0,0);stroke-width:20" />
+            <line x1="0" y1="400" x2="600" y2="400" style="stroke:rgb(0,0,0);stroke-width:20" />
+            <rect id="upperLeft" x="0" y="0" width="190" height="190" style="fill:rgb(0,255,255);stroke-width:1;stroke:rgb(0,255,255)" />
+            <rect id="upperMiddle" x="210" y="0" width="180" height="190" style="fill:rgb(0,255,255);stroke-width:1;stroke:rgb(0,255,255)" />
+            <rect id="upperRight" x="410" y="0" width="190" height="190" style="fill:rgb(0,255,255);stroke-width:1;stroke:rgb(0,255,255)" />
+            <rect id="middleLeft" x="0" y="210" width="190" height="180" style="fill:rgb(0,255,255);stroke-width:1;stroke:rgb(0,255,255)" />
+            <rect id="middleMiddle" x="210" y="210" width="180" height="180" style="fill:rgb(0,255,255);stroke-width:1;stroke:rgb(0,255,255)" />
+            <rect id="middleRight" x="410" y="210" width="190" height="180" style="fill:rgb(0,255,255);stroke-width:1;stroke:rgb(0,255,255)" />
+            <rect id="bottomLeft" x="0" y="410" width="190" height="190" style="fill:rgb(0,255,255);stroke-width:1;stroke:rgb(0,255,255)" />
+            <rect id="bottomMiddle" x="210" y="410" width="180" height="190" style="fill:rgb(0,255,255);stroke-width:1;stroke:rgb(0,255,255)" />
+            <rect id="bottomRight" x="410" y="410" width="190" height="190" style="fill:rgb(0,255,255);stroke-width:1;stroke:rgb(0,255,255)" />
+        </svg>
+        <p>&nbsp;</p>
+        <p>Known issues: Doesn't work in Firefox yet.</p>
+    </div>
+
+</div>
+
+<script language="javascript">
+
+var xTurn = true;
+var gameOver = false;
+var turns = 0;
+var svg = document.getElementById("theSquare");
+var upperLeft = svg.getElementById("upperLeft");
+var upperMiddle = svg.getElementById("upperMiddle");
+var upperRight = svg.getElementById("upperRight");
+var middleLeft = svg.getElementById("middleLeft");
+var middleMiddle = svg.getElementById("middleMiddle");
+var middleRight = svg.getElementById("middleRight");
+var bottomLeft = svg.getElementById("bottomLeft");
+var bottomMiddle = svg.getElementById("bottomMiddle");
+var bottomRight = svg.getElementById("bottomRight");
+
+function setupGrid() {
+    addSquareListener("upperLeft");
+    addSquareListener("upperMiddle");
+    addSquareListener("upperRight");
+    addSquareListener("middleLeft");
+    addSquareListener("middleMiddle");
+    addSquareListener("middleRight");
+    addSquareListener("bottomLeft");
+    addSquareListener("bottomMiddle");
+    addSquareListener("bottomRight");
+}
+
+function addSquareListener(squareId) {
+
+    var td = svg.getElementById(squareId);
+    td.addEventListener("click",function(){
+
+        if (gameOver) {
+            return;
+        }
+
+        if ((td.name === "X") || (td.name === "O")) {
+            return;
+        }
+
+        var rect = td.getBoundingClientRect();
+        var x = (((rect.right)-(rect.left)) / 2);
+        var y = ((rect.bottom-rect.top) / 2);
+
+        if (xTurn) {
+            td.name = "X";
+            var addition = document.createElementNS("http://www.w3.org/2000/svg", 'g'); //Create a path in SVG's namespace
+
+            var leftX = document.createElementNS("http://www.w3.org/2000/svg", 'line');
+            leftX.setAttribute("x1", 20+parseInt(td.getAttribute("x"))-95+x);
+            leftX.setAttribute("y1", 20+parseInt(td.getAttribute("y"))-95+y);
+            leftX.setAttribute("x2", 170+parseInt(td.getAttribute("x"))-95+x);
+            leftX.setAttribute("y2", 170+parseInt(td.getAttribute("y"))-95+y);
+            leftX.style.stroke = "#000";
+            leftX.style.strokeWidth = "25px";
+            leftX.style.fill = "#0FB";
+
+            var rightX = document.createElementNS("http://www.w3.org/2000/svg", 'line');
+            rightX.setAttribute("x1", 170+parseInt(td.getAttribute("x"))-95+x);
+            rightX.setAttribute("y1", 20+parseInt(td.getAttribute("y"))-95+y);
+            rightX.setAttribute("x2", 20+parseInt(td.getAttribute("x"))-95+x);
+            rightX.setAttribute("y2", 170+parseInt(td.getAttribute("y"))-95+y);
+            rightX.style.stroke = "#000";
+            rightX.style.strokeWidth = "25px";
+            rightX.style.fill = "#0FB";
+
+            addition.appendChild(leftX);
+            addition.appendChild(rightX);
+            addition.setAttribute("id", td.getAttribute("id")+"-marker");
+            td.parentNode.appendChild(addition);
+            td.style.fill = "#0FB";
+
+        } else {
+
+            td.name = "O";
+            var addition = document.createElementNS("http://www.w3.org/2000/svg", 'circle'); //Create a path in SVG's namespace
+            addition.setAttribute("cx",x+parseInt(td.getAttribute("x")));
+            addition.setAttribute("cy",y+parseInt(td.getAttribute("y")));
+            addition.setAttribute("r","70");
+            addition.setAttribute("id", td.getAttribute("id")+"-marker");
+            addition.style.stroke = "#000";
+            addition.style.strokeWidth = "25px";
+            addition.style.fill = "#0CB";
+            td.parentNode.appendChild(addition);
+            td.style.fill = "#0CB";
+
+        }
+
+        checkForWinners();
+
+        xTurn = !xTurn;
+        turns+=1;
+
+        if ((turns >=9) && (!gameOver)) {
+            alert ("It's a draw!");
+            gameOver = true;
+        }
+
+    }, false);
+
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    var svgEmbed = document.getElementById("theSquare");
+    svgEmbed.addEventListener("load", setupGrid);
+
+},false);
+
+function checkForWinners() {
+
+    // There are eight ways to win
+    var winner = "";
+
+    // uppers
+    if ((upperLeft.name === "X") && (upperMiddle.name === "X") && (upperRight.name === "X")) {
+        winner = "X";
+        gameOver = true;
+    }
+    if ((upperLeft.name === "O") && (upperMiddle.name === "O") && (upperRight.name === "O")) {
+        winner = "O";
+        gameOver = true;
+    }
+    if (gameOver) {
+        svg.getElementById("upperLeft-marker").style.fill = "#0F0";
+        svg.getElementById("upperMiddle-marker").style.fill = "#0F0";
+        svg.getElementById("upperRight-marker").style.fill = "#0F0";
+        upperLeft.style.fill = "#0F0";
+        upperMiddle.style.fill = "#0F0";
+        upperRight.style.fill = "#0F0";
+        alert(winner+ " wins!");
+        return;
+    }
+
+    // middle
+    if ((middleLeft.name === "X") && (middleMiddle.name === "X") && (middleRight.name === "X")) {
+        winner = "X";
+        gameOver = true;
+    }
+    if ((middleLeft.name === "O") && (middleMiddle.name === "O") && (middleRight.name === "O")) {
+        winner = "O";
+        gameOver = true;
+    }
+    if (gameOver) {
+        svg.getElementById("middleLeft-marker").style.fill = "#0F0";
+        svg.getElementById("middleMiddle-marker").style.fill = "#0F0";
+        svg.getElementById("middleRight-marker").style.fill = "#0F0";
+        middleLeft.style.fill = "#0F0";
+        middleMiddle.style.fill = "#0F0";
+        middleRight.style.fill = "#0F0";
+        alert(winner+ " wins!");
+        return;
+    }
+
+    // bottoms
+    if ((bottomLeft.name === "X") && (bottomMiddle.name === "X") && (bottomRight.name === "X")) {
+        winner = "X";
+        gameOver = true;
+    }
+    if ((bottomLeft.name === "O") && (bottomMiddle.name === "O") && (bottomRight.name === "O")) {
+        winner = "O";
+        gameOver = true;
+    }
+    if (gameOver) {
+        svg.getElementById("bottomLeft-marker").style.fill = "#0F0";
+        svg.getElementById("bottomMiddle-marker").style.fill = "#0F0";
+        svg.getElementById("bottomRight-marker").style.fill = "#0F0";
+        bottomLeft.style.fill = "#0F0";
+        bottomMiddle.style.fill = "#0F0";
+        bottomRight.style.fill = "#0F0";
+        alert(winner+ " wins!");
+        return;
+    }
+
+    // left
+    if ((upperLeft.name === "X") && (middleLeft.name === "X") && (bottomLeft.name === "X")) {
+        winner = "X";
+        gameOver = true;
+    }
+    if ((upperLeft.name === "O") && (middleLeft.name === "O") && (bottomLeft.name === "O")) {
+        winner = "O";
+        gameOver = true;
+    }
+    if (gameOver) {
+        svg.getElementById("upperLeft-marker").style.fill = "#0F0";
+        svg.getElementById("middleLeft-marker").style.fill = "#0F0";
+        svg.getElementById("bottomLeft-marker").style.fill = "#0F0";
+        upperLeft.style.fill = "#0F0";
+        middleLeft.style.fill = "#0F0";
+        bottomLeft.style.fill = "#0F0";
+        alert(winner+ " wins!");
+        return;
+    }
+
+    // middle
+    if ((upperMiddle.name === "X") && (middleMiddle.name === "X") && (bottomMiddle.name === "X")) {
+        winner = "X";
+        gameOver = true;
+    }
+    if ((upperMiddle.name === "O") && (middleMiddle.name === "O") && (bottomMiddle.name === "O")) {
+        winner = "O";
+        gameOver = true;
+    }
+    if (gameOver) {
+        svg.getElementById("upperMiddle-marker").style.fill = "#0F0";
+        svg.getElementById("middleMiddle-marker").style.fill = "#0F0";
+        svg.getElementById("bottomMiddle-marker").style.fill = "#0F0";
+        upperMiddle.style.fill = "#0F0";
+        middleMiddle.style.fill = "#0F0";
+        bottomMiddle.style.fill = "#0F0";
+        alert(winner+ " wins!");
+        return;
+    }
+
+    // right
+    if ((upperRight.name === "X") && (middleRight.name === "X") && (bottomRight.name === "X")) {
+        winner = "X";
+        gameOver = true;
+    }
+    if ((upperRight.name === "O") && (middleRight.name === "O") && (bottomRight.name === "O")) {
+        winner = "O";
+        gameOver = true;
+    }
+    if (gameOver) {
+        svg.getElementById("upperRight-marker").style.fill = "#0F0";
+        svg.getElementById("middleRight-marker").style.fill = "#0F0";
+        svg.getElementById("bottomRight-marker").style.fill = "#0F0";
+        upperRight.style.fill = "#0F0";
+        middleRight.style.fill = "#0F0";
+        bottomRight.style.fill = "#0F0";
+        alert(winner+ " wins!");
+        return;
+    }
+
+    // diagonal up
+    if ((bottomLeft.name === "X") && (middleMiddle.name === "X") && (upperRight.name === "X")) {
+        winner = "X";
+        gameOver = true;
+    }
+    if ((bottomLeft.name === "O") && (middleMiddle.name === "O") && (upperRight.name === "O")) {
+        winner = "O";
+        gameOver = true;
+    }
+    if (gameOver) {
+        svg.getElementById("bottomLeft-marker").style.fill = "#0F0";
+        svg.getElementById("middleMiddle-marker").style.fill = "#0F0";
+        svg.getElementById("upperRight-marker").style.fill = "#0F0";
+        bottomLeft.style.fill = "#0F0";
+        middleMiddle.style.fill = "#0F0";
+        upperRight.style.fill = "#0F0";
+        alert(winner+ " wins!");
+        return;
+    }
+
+    // diagonal down
+    if ((upperLeft.name === "X") && (middleMiddle.name === "X") && (bottomRight.name === "X")) {
+        winner = "X";
+        gameOver = true;
+    }
+    if ((upperLeft.name === "O") && (middleMiddle.name === "O") && (bottomRight.name === "O")) {
+        winner = "O";
+        gameOver = true;
+    }
+    if (gameOver) {
+        svg.getElementById("upperLeft-marker").style.fill = "#0F0";
+        svg.getElementById("middleMiddle-marker").style.fill = "#0F0";
+        svg.getElementById("bottomRight-marker").style.fill = "#0F0";
+        upperLeft.style.fill = "#0F0";
+        middleMiddle.style.fill = "#0F0";
+        bottomRight.style.fill = "#0F0";
+        alert(winner+ " wins!");
+        return;
+    }
+}
+
+</script>
+
+<!-- Load JS at bottom -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+
+
+</body>
+
+</html>
