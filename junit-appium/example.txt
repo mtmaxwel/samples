@@ -1,0 +1,75 @@
+// Example test case for the scenario when you search for "Aus" then
+// Australia should be in the search results.  It utilizes a helper
+// function countrySearch not included in the example code.
+@Test
+public void testSearchForAustralia() {
+    openSearchScreen();
+    takeScreenshot();
+
+    WebElement resultTextElement = null;
+
+    try {
+        resultTextElement = countrySearch("Aus", "Australia");
+    } catch (NoSuchElementException ex) {
+    }
+
+    takeScreenshot();
+    assertNotNull("The autosuggest list did not contain 'Australia'", resultTextElement);
+}
+
+// This is a helper function to open a search screen.
+protected void openSearchScreen() {
+
+    WebElement element = null;
+    try {
+        element = getWebDriver().findElement(By.name("Search Screen Link Text"));
+    } catch (NoSuchElementException ex) {
+    }
+
+    takeScreenshot();
+    assertNotNull(element);
+
+    element.click();
+}
+
+// This is a partial snippet of a helper function to scroll through
+// a custom calendar to find select two dates.
+protected void selectTwoDates(Date startDate, Date endDate) {
+
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(startDate);
+    int startMonth = cal.get(Calendar.MONTH);
+
+    cal.setTime(endDate);
+    int endMonth = cal.get(Calendar.MONTH);
+    
+    Locale currentLocale = this.getDeviceConfiguration().getLocaleObject();
+    String localizedStartMonth = new DateFormatSymbols(currentLocale).getMonths()[startMonth];
+    String localizedEndMonth = new DateFormatSymbols(currentLocale).getMonths()[endMonth];
+
+    WebElement checkInDate = null;
+    try {
+        checkInDate = this.getWebDriver().findElement(By.name(t.localize("Today")));
+    } catch (NoSuchElementException ex) {
+
+    }
+    takeScreenshot();
+    assertNotNull(checkInDate);
+
+    checkInDate.click();
+
+    // Scroll down until you get to the start date
+    WebElement startMonthElement = null;
+    int maxScrolls = 20;
+    for (int i = 0; i < maxScrolls; i++) {
+        try {
+            startMonthElement = this.getWebDriver().findElement(By.name(localizedStartMonth));
+            if (startMonthElement != null)
+                break;
+        } catch (NoSuchElementException ex) {
+
+        }
+        scrollDownCalendar();
+    }
+    assertNotNull("Unable to scroll calendar to the start month ("+localizedStartMonth+")", startMonthElement);
+}
